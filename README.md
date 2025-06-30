@@ -26,6 +26,9 @@ Visit `http://192.168.10.1:8000` to access the web interface. Each camera can be
 assigned a codec and multicast port via the form and the settings are saved
 through the FastAPI backend.
 
+An **ARP Scan** button on the page lists devices on `eth0` whose MAC address
+starts with `DC:36:43`. Use this to quickly discover connected EMOS cameras.
+
 This project provides a minimal web interface for configuring EMOS cameras on a Raspberry Pi. The service can run in hotspot mode or over an existing wired connection.
 
 ## Installation
