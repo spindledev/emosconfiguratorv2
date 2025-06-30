@@ -2,6 +2,26 @@
 
 Tool for configuring EMOS cameras via hotspot or wired setup.
 
+## Setup
+
+1. Clone this repository.
+2. (Optional) Create and activate a Python virtual environment.
+3. Install the dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Running the FastAPI App
+
+Launch the server with `uvicorn`:
+
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Visit `http://localhost:8000` in your browser to open the configurator.
+
 Visit `http://192.168.10.1:8000` to access the web interface. Each camera can be
 assigned a codec and multicast port via the form and the settings are saved
 through the FastAPI backend.
@@ -37,5 +57,6 @@ Response:
 Power on the Raspberry Pi and connect to the hotspot mentioned above, then browse to [http://192.168.10.1:8000](http://192.168.10.1:8000). Follow the steps in the [user guide](userguide.md) to configure each camera.
 
 Tool for configuring EMOS cameras via hotspot or wired setup.
+
 
 
