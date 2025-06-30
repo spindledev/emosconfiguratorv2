@@ -1,10 +1,18 @@
+
+from fastapi import FastAPI
 from fastapi import FastAPI, HTTPException
 
 from . import occ_wrapper
 
+
 app = FastAPI()
 
 @app.get("/")
+
+async def read_root():
+    """Return a simple health check response."""
+    return {"msg": "ok"}
+
 def read_root():
     return {"msg": "ok"}
 
