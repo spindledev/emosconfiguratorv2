@@ -1,1 +1,22 @@
-<html><body><h1>EMOS Configurator</h1></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EMOS Configurator</title>
+</head>
+<body>
+    <h1>EMOS Configurator</h1>
+    {% for camera_id, setting in cameras.items() %}
+    <h2>Camera {{ camera_id }}</h2>
+    <form method="post" action="/settings/{{ camera_id }}">
+        <label>Codec:</label>
+        <select name="codec">
+            <option value="MJPEG" {% if setting.codec == 'MJPEG' %}selected{% endif %}>MJPEG</option>
+            <option value="H264" {% if setting.codec == 'H264' %}selected{% endif %}>H264</option>
+        </select>
+        <label>Multicast Port:</label>
+        <input type="number" name="port" value="{{ setting.port }}" />
+        <button type="submit">Save</button>
+    </form>
+    {% endfor %}
+</body>
+</html>
