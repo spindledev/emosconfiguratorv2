@@ -1,4 +1,8 @@
 from fastapi import FastAPI
+
 app = FastAPI()
-@app.get('/')
-def read_root(): return {'msg': 'ok'}
+
+@app.get("/")
+async def read_root():
+    """Return a simple health check response."""
+    return {"msg": "ok"}
