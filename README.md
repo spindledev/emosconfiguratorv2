@@ -1,5 +1,6 @@
 # EMOS Configurator
 
+
 This project provides a minimal web interface for configuring EMOS cameras on a Raspberry Pi. The service can run in hotspot mode or over an existing wired connection.
 
 ## Installation
@@ -29,3 +30,6 @@ Response:
 ## Hotspot and camera configuration
 
 Power on the Raspberry Pi and connect to the hotspot mentioned above, then browse to [http://192.168.10.1:8000](http://192.168.10.1:8000). Follow the steps in the [user guide](userguide.md) to configure each camera.
+
+Tool for configuring EMOS cameras via hotspot or wired setup.
+
