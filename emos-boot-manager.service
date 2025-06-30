@@ -10,3 +10,13 @@ User=spindle
 
 [Install]
 WantedBy=multi-user.target
+
+
+[Service]
+ExecStart=/home/spindle/emosconfiguratorv2/emos_boot_manager.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+...
+
