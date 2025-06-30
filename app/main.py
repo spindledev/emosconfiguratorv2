@@ -45,3 +45,40 @@ async def save_camera_settings(camera_id: int, codec: str = Form(...), port: int
     """Save settings submitted from the form and redirect back to index."""
     save_settings(camera_id, codec, port)
     return RedirectResponse(url="/", status_code=303)
+
+from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+
+from . import occ_wrapper
+
+
+app = FastAPI()
+
+@app.get("/")
+
+async def read_root():
+    """Return a simple health check response."""
+    return {"msg": "ok"}
+
+def read_root():
+    return {"msg": "ok"}
+
+
+@app.get("/camera/{parameter}")
+def get_camera_parameter(parameter: str):
+    try:
+        return occ_wrapper.read_parameter(parameter)
+    except occ_wrapper.OCCError as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/camera/{parameter}")
+def set_camera_parameter(parameter: str, value: str):
+    try:
+        return occ_wrapper.set_parameter(parameter, value)
+    except occ_wrapper.OCCError as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+@app.get('/')
+def read_root(): return {'msg': 'ok'}
+
+
