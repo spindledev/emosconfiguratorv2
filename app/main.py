@@ -4,7 +4,6 @@ from . import occ_wrapper
 
 app = FastAPI()
 
-
 @app.get("/")
 def read_root():
     return {"msg": "ok"}
@@ -24,3 +23,6 @@ def set_camera_parameter(parameter: str, value: str):
         return occ_wrapper.set_parameter(parameter, value)
     except occ_wrapper.OCCError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+@app.get('/')
+def read_root(): return {'msg': 'ok'}
+

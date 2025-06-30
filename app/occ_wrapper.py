@@ -67,3 +67,5 @@ def set_parameter(parameter: str, value: str) -> Dict[str, str]:
     """Set a camera parameter using OCC."""
     _run_occ(["set", parameter, str(value)])
     return {"status": "ok"}
+=======
+# Wrapper around OCC binary
