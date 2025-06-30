@@ -58,5 +58,9 @@ Power on the Raspberry Pi and connect to the hotspot mentioned above, then brows
 
 Tool for configuring EMOS cameras via hotspot or wired setup.
 
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
 
 
