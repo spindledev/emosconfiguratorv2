@@ -1,3 +1,10 @@
 [Unit]
 Description=EMOS Boot Mode Manager
+
+[Service]
+ExecStart=/home/spindle/emosconfiguratorv2/emos_boot_manager.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
 ...
