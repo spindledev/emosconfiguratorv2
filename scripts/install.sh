@@ -41,6 +41,9 @@ sudo systemctl enable emos-configurator.service
 sudo systemctl enable emos-boot-manager.service
 sudo systemctl enable unblock-wifi.service
 
+# Mark installation as complete so next boot starts in business mode
+echo "business" | sudo tee /etc/emos/boot_mode > /dev/null
+
 echo "[INFO] Installation completed. Rebooting in 5 seconds..."
 sleep 5
 sudo reboot
