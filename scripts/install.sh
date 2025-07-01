@@ -11,14 +11,11 @@ sudo apt install -y dnsmasq hostapd python3-pip
 sudo mkdir -p /etc/emos
 sudo cp config/dnsmasq.conf /etc/dnsmasq.conf
 sudo cp config/hostapd.conf /etc/hostapd/hostapd.conf
-# Configure static IP via dhcpcd
-if ! grep -q "EMOS Config" /etc/dhcpcd.conf; then
-  {
-    echo "# EMOS Config start";
-    cat config/dhcpcd.conf;
-    echo "# EMOS Config end";
-  } | sudo tee -a /etc/dhcpcd.conf > /dev/null
-fi
+# Configure static IP via systemd-networkd
+sudo mkdir -p /etc/systemd/network
+sudo cp config/wlan0.network /etc/systemd/network/wlan0.network
+sudo systemctl enable systemd-networkd
+sudo systemctl restart systemd-networkd
 
 # Schakel services in
 sudo systemctl unmask hostapd

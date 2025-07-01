@@ -41,7 +41,9 @@ Follow these steps to set up the configurator:
    sudo ./scripts/install.sh
    ```
 
-   The script installs required packages and marks the system for business mode on the next reboot.
+    The script installs required packages, configures `systemd-networkd` so
+    that `wlan0` uses the static address `192.168.10.1`, and marks the system
+    for business mode on the next reboot.
 
 2. **Business mode** – after the reboot, connect to Wi‑Fi network `Spindle_EMOS_Config` and open [http://192.168.10.1:8000](http://192.168.10.1:8000). The ethernet interface is now used only to configure EMOS cameras and for ARP scans.
 
