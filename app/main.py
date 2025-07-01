@@ -63,7 +63,13 @@ async def index(request: Request):
     cameras = get_connected_cameras()
     camera_settings = {cid: load_settings(cid) for cid in cameras}
     return templates.TemplateResponse(
-        "index.html", {"request": request, "cameras": camera_settings}
+        "index.html",
+        {
+            "request": request,
+            "cameras": camera_settings,
+            "mode": "scan",
+            "subnet": "",
+        },
     )
 
 
@@ -76,10 +82,14 @@ async def save_camera_settings(
     return RedirectResponse(url="/", status_code=303)
 
 
-@app.post("/arp_scan", response_class=HTMLResponse)
-async def arp_scan(request: Request):
-    """Run an ARP scan and display the results on the index page."""
-    scan_results = network.find_emos_cameras()
+@app.post("/discover", response_class=HTMLResponse)
+async def discover(request: Request, mode: str = Form("scan"), subnet: str = Form("")):
+    """Discover EMOS cameras using scan or sniff mode."""
+    if mode == "sniff":
+        scan_results = network.sniff_emos_cameras(interface="eth0", subnet=subnet or None)
+    else:
+        scan_results = network.find_emos_cameras(interface="eth0")
+
     cameras = get_connected_cameras()
     camera_settings = {cid: load_settings(cid) for cid in cameras}
     return templates.TemplateResponse(
@@ -88,6 +98,8 @@ async def arp_scan(request: Request):
             "request": request,
             "cameras": camera_settings,
             "scan_results": scan_results,
+            "mode": mode,
+            "subnet": subnet,
         },
     )
 
@@ -97,6 +109,12 @@ async def switch_business():
     """Switch the device into business mode and redirect to the index."""
     switch_to_business_mode()
     return RedirectResponse(url="/", status_code=303)
+
+
+@app.get("/eth0_subnet")
+def eth0_subnet():
+    """Return the IPv4 subnet of eth0."""
+    return {"subnet": network.get_subnet("eth0")}
 
 
 @app.get("/camera/{parameter}")
