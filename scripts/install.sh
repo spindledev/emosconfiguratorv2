@@ -29,8 +29,12 @@ sudo rfkill unblock wlan
 pip3 install --break-system-packages -r requirements.txt
 
 # Webapp & services
-sudo cp emos-configurator.service /etc/systemd/system/
-sudo cp emos-boot-manager.service /etc/systemd/system/
+REPO_DIR=$(pwd)
+CURRENT_USER=$(whoami)
+sed "s|/home/spindle/emosconfiguratorv2|$REPO_DIR|; s|User=spindle|User=$CURRENT_USER|" emos-configurator.service \
+  | sudo tee /etc/systemd/system/emos-configurator.service >/dev/null
+sed "s|/home/spindle/emosconfiguratorv2|$REPO_DIR|; s|User=spindle|User=$CURRENT_USER|" emos-boot-manager.service \
+  | sudo tee /etc/systemd/system/emos-boot-manager.service >/dev/null
 sudo cp unblock-wifi.service /etc/systemd/system/
 sudo chmod +x emos_boot_manager.sh
 sudo systemctl daemon-reload
