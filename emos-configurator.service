@@ -3,7 +3,7 @@ Description=EMOS Configurator Web Interface
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /home/spindle/.local/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+ExecStart=/home/spindle/emosconfiguratorv2/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
 WorkingDirectory=/home/spindle/emosconfiguratorv2
 Restart=always
 User=spindle
