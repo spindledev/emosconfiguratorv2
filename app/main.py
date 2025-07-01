@@ -8,6 +8,7 @@ from pathlib import Path
 from . import occ_wrapper
 from . import network
 
+from . import version
 app = FastAPI()
 
 templates = Jinja2Templates(directory="app/templates")
@@ -103,6 +104,18 @@ def set_camera_parameter(parameter: str, value: str):
         return occ_wrapper.set_parameter(parameter, value)
     except occ_wrapper.OCCError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/version")
+def show_version():
+    """Return local and remote version information."""
+    local_v = version.get_local_version()
+    remote_v = version.get_remote_version()
+    return {
+        "local_version": local_v,
+        "remote_version": remote_v,
+        "update_available": version.update_available(local_v)
+    }
 
 
 @app.get("/health")
