@@ -5,7 +5,7 @@ echo "[INFO] Starting EMOS Configurator installation..."
 
 # Update en dependencies
 sudo apt update
-sudo apt install -y dnsmasq hostapd python3-pip git build-essential \
+sudo apt install -y dnsmasq hostapd tcpdump python3-pip git build-essential \
     gcc-aarch64-linux-gnu
 
 # Install OCC binary if missing
