@@ -8,3 +8,4 @@
    - Choose codec (MJPEG / H264)
    - Set multicast port
    - Save per camera
+5. Klik op "Switch to Business Mode" om het apparaat naar bedrijfsmodus te zetten

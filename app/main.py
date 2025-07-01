@@ -2,6 +2,7 @@ from fastapi import FastAPI, Form, Request, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 import json
+import subprocess
 from pathlib import Path
 
 from . import occ_wrapper
@@ -15,6 +16,8 @@ CONFIG_DIR = Path("config")
 CONFIG_DIR.mkdir(exist_ok=True)
 
 CAMERAS = [1, 2, 3, 4]
+
+BOOT_MODE_FILE = Path("/etc/emos/boot_mode")
 
 
 def load_settings(camera_id: int):
@@ -31,6 +34,19 @@ def save_settings(camera_id: int, codec: str, port: int):
     path = CONFIG_DIR / f"camera_{camera_id}.json"
     with open(path, "w") as f:
         json.dump({"codec": codec, "port": port}, f)
+
+
+def switch_to_business_mode():
+    """Write 'business' to the boot mode file and start hotspot services."""
+    try:
+        subprocess.run(
+            ["sudo", "sh", "-c", f"echo business > {BOOT_MODE_FILE}"],
+            check=True,
+        )
+    except subprocess.CalledProcessError:
+        pass
+    subprocess.run(["sudo", "systemctl", "start", "hostapd"], check=False)
+    subprocess.run(["sudo", "systemctl", "start", "dnsmasq"], check=False)
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -64,6 +80,13 @@ async def arp_scan(request: Request):
             "scan_results": scan_results,
         },
     )
+
+
+@app.post("/business")
+async def switch_business():
+    """Switch the device into business mode and redirect to the index."""
+    switch_to_business_mode()
+    return RedirectResponse(url="/", status_code=303)
 
 
 @app.get("/camera/{parameter}")
