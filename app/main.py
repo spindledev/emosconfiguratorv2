@@ -91,10 +91,13 @@ async def sniffer_page(request: Request):
     )
 
 
-@app.post("/sniffer", response_class=HTMLResponse)
-async def run_sniffer(request: Request):
-    results = network.sniff_emos_cameras(interface="eth0")
+@app.post("/sniffer")
+async def run_sniffer(request: Request, duration: int = Form(30)):
+    """Run the sniffer for ``duration`` seconds and return results."""
+    results = network.sniff_emos_cameras(interface="eth0", timeout=duration)
     subnet = network.subnet_from_ip(results[0]["ip"]) if results else ""
+    if request.headers.get("accept") == "application/json":
+        return {"results": results, "subnet": subnet}
     return templates.TemplateResponse(
         "sniffer.html",
         {"request": request, "results": results, "subnet": subnet},
