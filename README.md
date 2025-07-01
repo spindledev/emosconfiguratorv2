@@ -37,7 +37,7 @@ DHCP requests. You can capture these without sending any traffic yourself:
 sudo tcpdump -i eth0 -n -e
 ```
 
-Look for frames with the Orlaco vendor prefix `d8:3a:dd` to identify the
+Look for frames with the Orlaco vendor prefix `DC:36:43:C` to identify the
 camera's MAC address.
 
 This project provides a minimal web interface for configuring EMOS cameras on a Raspberry Pi. The service can run in hotspot mode or over an existing wired connection.
