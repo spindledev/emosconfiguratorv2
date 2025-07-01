@@ -16,12 +16,19 @@ templates = Jinja2Templates(directory="app/templates")
 CONFIG_DIR = Path("config")
 CONFIG_DIR.mkdir(exist_ok=True)
 
-CAMERAS = [1, 2, 3, 4]
 
 BOOT_MODE_FILE = Path("/etc/emos/boot_mode")
 
 
-def load_settings(camera_id: int):
+def get_connected_cameras():
+    """Return a list of detected camera identifiers."""
+    try:
+        return occ_wrapper.list_cameras()
+    except occ_wrapper.OCCError:
+        return []
+
+
+def load_settings(camera_id: str):
     """Load settings for a camera or return defaults."""
     path = CONFIG_DIR / f"camera_{camera_id}.json"
     if path.exists():
@@ -30,7 +37,7 @@ def load_settings(camera_id: int):
     return {"codec": "MJPEG", "port": 5000}
 
 
-def save_settings(camera_id: int, codec: str, port: int):
+def save_settings(camera_id: str, codec: str, port: int):
     """Persist settings for a camera."""
     path = CONFIG_DIR / f"camera_{camera_id}.json"
     with open(path, "w") as f:
@@ -53,7 +60,8 @@ def switch_to_business_mode():
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     """Render the configuration page with current settings."""
-    camera_settings = {cid: load_settings(cid) for cid in CAMERAS}
+    cameras = get_connected_cameras()
+    camera_settings = {cid: load_settings(cid) for cid in cameras}
     return templates.TemplateResponse(
         "index.html", {"request": request, "cameras": camera_settings}
     )
@@ -61,7 +69,7 @@ async def index(request: Request):
 
 @app.post("/settings/{camera_id}")
 async def save_camera_settings(
-    camera_id: int, codec: str = Form(...), port: int = Form(...)
+    camera_id: str, codec: str = Form(...), port: int = Form(...)
 ):
     """Save settings submitted from the form and redirect back to index."""
     save_settings(camera_id, codec, port)
@@ -72,7 +80,8 @@ async def save_camera_settings(
 async def arp_scan(request: Request):
     """Run an ARP scan and display the results on the index page."""
     scan_results = network.find_emos_cameras()
-    camera_settings = {cid: load_settings(cid) for cid in CAMERAS}
+    cameras = get_connected_cameras()
+    camera_settings = {cid: load_settings(cid) for cid in cameras}
     return templates.TemplateResponse(
         "index.html",
         {

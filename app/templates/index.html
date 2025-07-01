@@ -8,6 +8,9 @@
     <form method="post" action="/arp_scan">
         <button type="submit">ARP Scan</button>
     </form>
+    <form method="get" action="/">
+        <button type="submit">Refresh</button>
+    </form>
     <form method="post" action="/business">
         <button type="submit">Switch to Business Mode</button>
     </form>
@@ -20,6 +23,7 @@
         {% endfor %}
     </ul>
     {% endif %}
+    {% if cameras %}
     {% for camera_id, setting in cameras.items() %}
     <h2>Camera {{ camera_id }}</h2>
     <form method="post" action="/settings/{{ camera_id }}">
@@ -33,6 +37,9 @@
         <button type="submit">Save</button>
     </form>
     {% endfor %}
+    {% else %}
+    <p>No cameras detected.</p>
+    {% endif %}
 </body>
 </html>
 
