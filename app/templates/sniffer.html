@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EMOS Sniffer</title>
+</head>
+<body>
+    <h1>Discover EMOS Cameras</h1>
+    <form method="post" action="/sniffer">
+        <button type="submit">Sniff</button>
+    </form>
+    <p><a href="/">Back to configuration</a></p>
+    {% if results %}
+    <h2>Results</h2>
+    <ul>
+        {% for res in results %}
+        <li>{{ res.mac }} - {{ res.ip }}</li>
+        {% endfor %}
+    </ul>
+    {% if subnet %}
+    <form method="post" action="/apply_subnet">
+        <input type="hidden" name="subnet" value="{{ subnet }}" />
+        <button type="submit">Use subnet {{ subnet }}</button>
+    </form>
+    {% endif %}
+    {% endif %}
+</body>
+</html>

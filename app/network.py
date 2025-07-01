@@ -120,3 +120,24 @@ def eth0_is_static(ip: str = "192.168.40.240/24") -> bool:
     except subprocess.CalledProcessError:
         return False
     return ip in output
+
+
+def subnet_from_ip(ip: str) -> str:
+    """Return a /24 subnet in CIDR notation derived from *ip*."""
+    parts = ip.split(".")
+    if len(parts) != 4:
+        return ""
+    return ".".join(parts[:3] + ["0"]) + "/24"
+
+
+def set_eth0_subnet(subnet: str) -> None:
+    """Configure ``eth0`` for the supplied ``subnet``."""
+    try:
+        network, prefix = subnet.split("/")
+    except ValueError:
+        return
+    parts = network.split(".")
+    if len(parts) != 4:
+        return
+    ip = ".".join(parts[:3] + ["240"]) + f"/{prefix}"
+    set_eth0_static(ip)

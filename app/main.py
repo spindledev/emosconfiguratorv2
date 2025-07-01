@@ -69,8 +69,6 @@ async def index(request: Request):
         {
             "request": request,
             "cameras": camera_settings,
-            "mode": "scan",
-            "subnet": "",
             "eth0_static": network.eth0_is_static(),
         },
     )
@@ -85,28 +83,28 @@ async def save_camera_settings(
     return RedirectResponse(url="/", status_code=303)
 
 
-@app.post("/discover", response_class=HTMLResponse)
-async def discover(request: Request, mode: str = Form("scan"), subnet: str = Form("")):
-    """Discover EMOS cameras using scan or sniff mode."""
-    if mode == "sniff":
-        scan_results = network.sniff_emos_cameras(interface="eth0")
-    else:
-        ips = network.find_emos_cameras(interface="eth0")
-        scan_results = [{"ip": ip, "mac": ""} for ip in ips]
-
-    cameras = get_connected_cameras()
-    camera_settings = {cid: load_settings(cid) for cid in cameras}
+@app.get("/sniffer", response_class=HTMLResponse)
+async def sniffer_page(request: Request):
     return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "cameras": camera_settings,
-            "scan_results": scan_results,
-            "mode": mode,
-            "subnet": subnet,
-            "eth0_static": network.eth0_is_static(),
-        },
+        "sniffer.html",
+        {"request": request, "results": [], "subnet": ""},
     )
+
+
+@app.post("/sniffer", response_class=HTMLResponse)
+async def run_sniffer(request: Request):
+    results = network.sniff_emos_cameras(interface="eth0")
+    subnet = network.subnet_from_ip(results[0]["ip"]) if results else ""
+    return templates.TemplateResponse(
+        "sniffer.html",
+        {"request": request, "results": results, "subnet": subnet},
+    )
+
+
+@app.post("/apply_subnet")
+async def apply_subnet(subnet: str = Form(...)):
+    network.set_eth0_subnet(subnet)
+    return RedirectResponse(url="/", status_code=303)
 
 
 @app.post("/business")
