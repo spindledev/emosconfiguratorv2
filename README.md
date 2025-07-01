@@ -63,6 +63,11 @@ Response:
 
 Power on the Raspberry Pi and connect to the hotspot mentioned above, then browse to [http://192.168.10.1:8000](http://192.168.10.1:8000). Follow the steps in the [user guide](userguide.md) to configure each camera.
 
+## Version updates
+
+A `VERSION` file keeps track of the installed version. The utilities in `app/version.py` compare this to the latest release on GitHub. Set the `GITHUB_REPO` environment variable (for example `user/repo`) to enable the update check.
+
+
 
 ## License
 
