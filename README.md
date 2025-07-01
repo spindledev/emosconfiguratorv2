@@ -39,7 +39,7 @@ Run the installer on the target device:
 sudo ./scripts/install.sh
 ```
 
-The script installs required packages, sets up `hostapd` and `dnsmasq`, and registers the system services for the configurator. After completion the device reboots and exposes a WiFi network `Spindle_EMOS_Config`.
+The script installs required packages, sets up `hostapd` and `dnsmasq`, and registers the system services for the configurator. It also installs `unblock-wifi.service` so Wi-Fi remains unblocked after reboot. After completion the device reboots and exposes a WiFi network `Spindle_EMOS_Config`.
 
 ## Example API usage
 
