@@ -8,6 +8,7 @@ from pathlib import Path
 from . import occ_wrapper
 from . import network
 
+
 from . import version
 app = FastAPI()
 
@@ -55,6 +56,7 @@ def switch_to_business_mode():
         pass
     subprocess.run(["sudo", "systemctl", "start", "hostapd"], check=False)
     subprocess.run(["sudo", "systemctl", "start", "dnsmasq"], check=False)
+    network.set_eth0_static()
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -69,6 +71,7 @@ async def index(request: Request):
             "cameras": camera_settings,
             "mode": "scan",
             "subnet": "",
+            "eth0_static": network.eth0_is_static(),
         },
     )
 
@@ -100,6 +103,7 @@ async def discover(request: Request, mode: str = Form("scan"), subnet: str = For
             "scan_results": scan_results,
             "mode": mode,
             "subnet": subnet,
+            "eth0_static": network.eth0_is_static(),
         },
     )
 
@@ -108,6 +112,13 @@ async def discover(request: Request, mode: str = Form("scan"), subnet: str = For
 async def switch_business():
     """Switch the device into business mode and redirect to the index."""
     switch_to_business_mode()
+    return RedirectResponse(url="/", status_code=303)
+
+
+@app.post("/dhcp")
+async def switch_dhcp():
+    """Configure ``eth0`` via DHCP and redirect to the index."""
+    network.set_eth0_dhcp()
     return RedirectResponse(url="/", status_code=303)
 
 
