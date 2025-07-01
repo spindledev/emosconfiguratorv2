@@ -26,8 +26,9 @@ Visit `http://192.168.10.1:8000` to access the web interface. Each camera can be
 assigned a codec and multicast port via the form and the settings are saved
 through the FastAPI backend.
 
-An **ARP Scan** button on the page lists devices on `eth0` whose MAC address
-starts with `DC:36:43`. Use this to quickly discover connected EMOS cameras.
+Use the **Discover** form on the web page to find connected cameras. A slider
+allows switching between active ARP scanning and a passive sniffer mode. When
+sniffing, you can copy the subnet of `eth0` with a single click.
 
 An alternative is to passively sniff the ethernet interface for broadcast or
 multicast traffic. The cameras regularly send out packets such as mDNS, SSDP or

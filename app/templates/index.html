@@ -2,11 +2,29 @@
 <html>
 <head>
     <title>EMOS Configurator</title>
+    <style>
+    .switch {position: relative; display: inline-block; width: 50px; height: 24px;}
+    .switch input {display:none;}
+    .slider {position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:.4s; border-radius:24px;}
+    .slider:before {position:absolute; content:""; height:18px; width:18px; left:3px; bottom:3px; background-color:white; transition:.4s; border-radius:50%;}
+    input:checked + .slider {background-color:#2196F3;}
+    input:checked + .slider:before {transform: translateX(26px);}
+    #sniffOptions {margin-top: 8px; display: none;}
+    </style>
 </head>
 <body>
     <h1>EMOS Configurator</h1>
-    <form method="post" action="/arp_scan">
-        <button type="submit">ARP Scan</button>
+    <form id="discoverForm" method="post" action="/discover">
+        <label class="switch">
+            <input type="checkbox" id="modeToggle" name="mode" value="sniff" {% if mode == 'sniff' %}checked{% endif %}>
+            <span class="slider"></span>
+        </label>
+        <span id="modeLabel">{% if mode == 'sniff' %}Sniff{% else %}Scan{% endif %}</span>
+        <div id="sniffOptions">
+            <input type="text" id="subnet" name="subnet" placeholder="Subnet" value="{{ subnet }}">
+            <button type="button" id="detectSubnetBtn">Gebruik eth0 subnet</button>
+        </div>
+        <button type="submit">Ontdekken</button>
     </form>
     <form method="get" action="/">
         <button type="submit">Refresh</button>
@@ -16,14 +34,14 @@
     </form>
 
     {% if scan_results %}
-    <h2>ARP Scan Results</h2>
+    <h2>Resultaten</h2>
     <ul>
         {% for ip in scan_results %}
         <li>{{ ip }}</li>
         {% endfor %}
     </ul>
-    {% endif %}
-    {% if cameras %}
+{% endif %}
+{% if cameras %}
     {% for camera_id, setting in cameras.items() %}
     <h2>Camera {{ camera_id }}</h2>
     <form method="post" action="/settings/{{ camera_id }}">
@@ -39,7 +57,31 @@
     {% endfor %}
     {% else %}
     <p>No cameras detected.</p>
-    {% endif %}
+{% endif %}
+<script>
+const toggle = document.getElementById('modeToggle');
+const sniffOpts = document.getElementById('sniffOptions');
+const label = document.getElementById('modeLabel');
+
+function updateView() {
+    if (toggle.checked) {
+        label.textContent = 'Sniff';
+        sniffOpts.style.display = 'block';
+    } else {
+        label.textContent = 'Scan';
+        sniffOpts.style.display = 'none';
+    }
+}
+
+toggle.addEventListener('change', updateView);
+updateView();
+
+document.getElementById('detectSubnetBtn').addEventListener('click', () => {
+    fetch('/eth0_subnet').then(r => r.json()).then(data => {
+        document.getElementById('subnet').value = data.subnet || '';
+    });
+});
+</script>
 </body>
 </html>
 
