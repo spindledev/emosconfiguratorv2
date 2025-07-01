@@ -29,8 +29,8 @@
     <form method="get" action="/">
         <button type="submit">Refresh</button>
     </form>
-    <form method="post" action="/business">
-        <button type="submit">Switch to Business Mode</button>
+    <form method="post" action="{% if eth0_static %}/dhcp{% else %}/business{% endif %}">
+        <button type="submit">{% if eth0_static %}DHCP Mode{% else %}Switch to Business Mode{% endif %}</button>
     </form>
 
     {% if scan_results %}

@@ -83,3 +83,28 @@ def get_subnet(interface: str = "eth0") -> str:
             if len(parts) >= 2:
                 return parts[1]
     return ""
+
+
+def set_eth0_static(ip: str = "192.168.40.240/24") -> None:
+    """Configure ``eth0`` with a static IP address."""
+    subprocess.run(["sudo", "ip", "addr", "flush", "dev", "eth0"], check=False)
+    subprocess.run(["sudo", "ip", "addr", "add", ip, "dev", "eth0"], check=False)
+    subprocess.run(["sudo", "ip", "link", "set", "eth0", "up"], check=False)
+
+
+def set_eth0_dhcp() -> None:
+    """Bring ``eth0`` up and obtain an address via DHCP."""
+    subprocess.run(["sudo", "ip", "addr", "flush", "dev", "eth0"], check=False)
+    subprocess.run(["sudo", "ip", "link", "set", "eth0", "up"], check=False)
+    subprocess.run(["sudo", "dhclient", "-1", "eth0"], check=False)
+
+
+def eth0_is_static(ip: str = "192.168.40.240/24") -> bool:
+    """Return ``True`` if ``eth0`` has the specified static address."""
+    try:
+        output = subprocess.check_output(
+            ["ip", "-4", "addr", "show", "dev", "eth0"], text=True
+        )
+    except subprocess.CalledProcessError:
+        return False
+    return ip in output
