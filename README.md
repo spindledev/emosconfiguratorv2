@@ -27,8 +27,9 @@ assigned a codec and multicast port via the form and the settings are saved
 through the FastAPI backend.
 
 Use the **Discover** form on the web page to find connected cameras. A slider
-allows switching between active ARP scanning and a passive sniffer mode. When
-sniffing, you can copy the subnet of `eth0` with a single click.
+allows switching between active ARP scanning and a passive sniffer mode. In
+sniffer mode the application runs ``tcpdump`` for one minute and lists all EMOS
+cameras it sees, showing both MAC and IP address regardless of the subnet.
 
 An alternative is to passively sniff the ethernet interface for broadcast or
 multicast traffic. The cameras regularly send out packets such as mDNS, SSDP or

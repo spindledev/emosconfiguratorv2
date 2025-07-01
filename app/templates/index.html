@@ -20,10 +20,7 @@
             <span class="slider"></span>
         </label>
         <span id="modeLabel">{% if mode == 'sniff' %}Sniff{% else %}Scan{% endif %}</span>
-        <div id="sniffOptions">
-            <input type="text" id="subnet" name="subnet" placeholder="Subnet" value="{{ subnet }}">
-            <button type="button" id="detectSubnetBtn">Gebruik eth0 subnet</button>
-        </div>
+        <div id="sniffOptions" style="display: none;"></div>
         <button type="submit">Ontdekken</button>
     </form>
     <form method="get" action="/">
@@ -36,11 +33,17 @@
     {% if scan_results %}
     <h2>Resultaten</h2>
     <ul>
-        {% for ip in scan_results %}
-        <li>{{ ip }}</li>
+        {% for res in scan_results %}
+        <li>
+            {% if res.mac %}
+            {{ res.mac }} - {{ res.ip }}
+            {% else %}
+            {{ res.ip }}
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
-{% endif %}
+    {% endif %}
 {% if cameras %}
     {% for camera_id, setting in cameras.items() %}
     <h2>Camera {{ camera_id }}</h2>
@@ -76,11 +79,6 @@ function updateView() {
 toggle.addEventListener('change', updateView);
 updateView();
 
-document.getElementById('detectSubnetBtn').addEventListener('click', () => {
-    fetch('/eth0_subnet').then(r => r.json()).then(data => {
-        document.getElementById('subnet').value = data.subnet || '';
-    });
-});
 </script>
 </body>
 </html>
