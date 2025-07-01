@@ -5,14 +5,16 @@ echo "[INFO] Starting EMOS Configurator installation..."
 
 # Update en dependencies
 sudo apt update
-sudo apt install -y dnsmasq hostapd python3-pip git build-essential
+sudo apt install -y dnsmasq hostapd python3-pip git build-essential \
+    gcc-aarch64-linux-gnu
 
 # Install OCC binary if missing
 if [ ! -f /usr/bin/occ ]; then
     echo "[INFO] Installing OCC (Open Camera Configurator)..."
     TMPDIR=$(mktemp -d)
     git clone --depth 1 https://github.com/Codemonkey1973/OCC "$TMPDIR/occ"
-    make -C "$TMPDIR/occ"
+    make -C "$TMPDIR/occ" clean
+    make -C "$TMPDIR/occ" CC=aarch64-linux-gnu-gcc
     sudo install -m 0755 "$TMPDIR/occ/occ" /usr/bin/occ
     rm -rf "$TMPDIR"
 fi
