@@ -26,10 +26,10 @@ Visit `http://192.168.10.1:8000` to access the web interface. Each camera can be
 assigned a codec and multicast port via the form and the settings are saved
 through the FastAPI backend.
 
-Open the **Discover** page to sniff for cameras. The sniffer runs ``tcpdump``
-for one minute and shows every EMOS camera it sees, including the MAC and IP
-address. The detected subnet can then be applied to ``eth0`` with a single
-click so the cameras can be configured via OCC.
+Open the **Discover** page to sniff for cameras. The sniffer can run ``tcpdump``
+for 5, 10 or 30 seconds and shows every EMOS camera it sees, including the MAC
+and IP address. The detected subnet can then be applied to ``eth0`` with a
+single click so the cameras can be configured via OCC.
 
 An alternative is to passively sniff the ethernet interface for broadcast or
 multicast traffic. The cameras regularly send out packets such as mDNS, SSDP or

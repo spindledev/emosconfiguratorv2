@@ -5,23 +5,69 @@
 </head>
 <body>
     <h1>Discover EMOS Cameras</h1>
-    <form method="post" action="/sniffer">
+    <form id="snifferForm" method="post" action="/sniffer">
+        <label for="duration">Duration:</label>
+        <select id="duration" name="duration">
+            <option value="5">5s</option>
+            <option value="10">10s</option>
+            <option value="30" selected>30s</option>
+        </select>
         <button type="submit">Sniff</button>
     </form>
+    <div id="progressContainer" style="display:none;width:100%;background:#ccc;margin-top:8px;">
+        <div id="progressBar" style="width:0;height:20px;background:#4CAF50;"></div>
+    </div>
     <p><a href="/">Back to configuration</a></p>
-    {% if results %}
     <h2>Results</h2>
-    <ul>
+    <ul id="results">
         {% for res in results %}
         <li>{{ res.mac }} - {{ res.ip }}</li>
         {% endfor %}
     </ul>
-    {% if subnet %}
-    <form method="post" action="/apply_subnet">
+    <form id="subnetForm" method="post" action="/apply_subnet" {% if not subnet %}style="display:none"{% endif %}>
         <input type="hidden" name="subnet" value="{{ subnet }}" />
-        <button type="submit">Use subnet {{ subnet }}</button>
+        <button type="submit">Use subnet <span id="subnetLabel">{{ subnet }}</span></button>
     </form>
-    {% endif %}
-    {% endif %}
+
+    <script>
+    const form = document.getElementById('snifferForm');
+    const progress = document.getElementById('progressBar');
+    const container = document.getElementById('progressContainer');
+    form.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const duration = parseInt(document.getElementById('duration').value, 10);
+        progress.style.width = '0%';
+        container.style.display = 'block';
+        const start = Date.now();
+        const timer = setInterval(() => {
+            const pct = Math.min(100, ((Date.now() - start) / 1000) / duration * 100);
+            progress.style.width = pct + '%';
+            if (pct >= 100) clearInterval(timer);
+        }, 100);
+        const data = new FormData(form);
+        fetch('/sniffer', {method: 'POST', body: data, headers: {'Accept': 'application/json'}})
+            .then(r => r.json())
+            .then(data => {
+                clearInterval(timer);
+                progress.style.width = '100%';
+                container.style.display = 'none';
+                const list = document.getElementById('results');
+                list.innerHTML = '';
+                data.results.forEach(r => {
+                    const li = document.createElement('li');
+                    li.textContent = r.mac + ' - ' + r.ip;
+                    list.appendChild(li);
+                });
+                const subForm = document.getElementById('subnetForm');
+                if (data.subnet) {
+                    subForm.style.display = 'block';
+                    subForm.querySelector('input[name="subnet"]').value = data.subnet;
+                    document.getElementById('subnetLabel').textContent = data.subnet;
+                } else {
+                    subForm.style.display = 'none';
+                }
+            });
+    });
+    </script>
 </body>
 </html>
