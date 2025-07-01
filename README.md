@@ -29,6 +29,17 @@ through the FastAPI backend.
 An **ARP Scan** button on the page lists devices on `eth0` whose MAC address
 starts with `DC:36:43`. Use this to quickly discover connected EMOS cameras.
 
+An alternative is to passively sniff the ethernet interface for broadcast or
+multicast traffic. The cameras regularly send out packets such as mDNS, SSDP or
+DHCP requests. You can capture these without sending any traffic yourself:
+
+```bash
+sudo tcpdump -i eth0 -n -e
+```
+
+Look for frames with the Orlaco vendor prefix `d8:3a:dd` to identify the
+camera's MAC address.
+
 This project provides a minimal web interface for configuring EMOS cameras on a Raspberry Pi. The service can run in hotspot mode or over an existing wired connection.
 
 ## Installation
