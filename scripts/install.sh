@@ -8,7 +8,8 @@ sudo apt update
 sudo apt install -y dnsmasq hostapd python3-pip
 
 # Maak directories indien nodig
-mkdir -p /etc/emos
+sudo mkdir -p /etc/emos
+sudo mkdir -p /etc/network/interfaces.d
 sudo cp config/dnsmasq.conf /etc/dnsmasq.conf
 sudo cp config/hostapd.conf /etc/hostapd/hostapd.conf
 sudo cp config/wlan0_static.conf /etc/network/interfaces.d/wlan0_static.conf
