@@ -34,10 +34,12 @@ pip3 install --break-system-packages -r requirements.txt
 # Webapp & services
 sudo cp emos-configurator.service /etc/systemd/system/
 sudo cp emos-boot-manager.service /etc/systemd/system/
+sudo cp unblock-wifi.service /etc/systemd/system/
 sudo chmod +x emos_boot_manager.sh
 sudo systemctl daemon-reload
 sudo systemctl enable emos-configurator.service
 sudo systemctl enable emos-boot-manager.service
+sudo systemctl enable unblock-wifi.service
 
 echo "[INFO] Installation completed. Rebooting in 5 seconds..."
 sleep 5
