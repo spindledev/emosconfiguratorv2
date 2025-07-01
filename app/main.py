@@ -89,9 +89,10 @@ async def save_camera_settings(
 async def discover(request: Request, mode: str = Form("scan"), subnet: str = Form("")):
     """Discover EMOS cameras using scan or sniff mode."""
     if mode == "sniff":
-        scan_results = network.sniff_emos_cameras(interface="eth0", subnet=subnet or None)
+        scan_results = network.sniff_emos_cameras(interface="eth0")
     else:
-        scan_results = network.find_emos_cameras(interface="eth0")
+        ips = network.find_emos_cameras(interface="eth0")
+        scan_results = [{"ip": ip, "mac": ""} for ip in ips]
 
     cameras = get_connected_cameras()
     camera_settings = {cid: load_settings(cid) for cid in cameras}

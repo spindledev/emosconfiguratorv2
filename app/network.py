@@ -1,8 +1,6 @@
 import subprocess
-from ipaddress import ip_network, ip_address
-from typing import List, Set
-
-from scapy.all import sniff, Ether, IP
+import re
+from typing import List
 
 
 def find_emos_cameras(
@@ -36,36 +34,50 @@ def find_emos_cameras(
 def sniff_emos_cameras(
     interface: str = "eth0",
     prefix: str = "DC:36:43",
-    timeout: int = 5,
-    subnet: str | None = None,
-) -> List[str]:
-    """Sniff *interface* for packets from EMOS cameras.
+    timeout: int = 60,
+) -> List[dict]:
+    """Return MAC and IP addresses of EMOS cameras seen in a tcpdump.
 
-    Parameters
-    ----------
-    interface: str
-        Interface to listen on.
-    prefix: str
-        MAC address prefix identifying EMOS cameras.
-    timeout: int
-        Capture duration in seconds.
-    subnet: str | None
-        Optional subnet filter in CIDR notation.
+    This function invokes ``tcpdump`` on ``interface`` for ``timeout`` seconds
+    and parses the output for packets originating from devices whose MAC address
+    starts with ``prefix``. The detection works independently of the subnet the
+    camera is on.
     """
 
-    net = ip_network(subnet, strict=False) if subnet else None
-    ips: Set[str] = set()
+    cameras = {}
+    prefix = prefix.upper()
 
-    def handler(pkt):
-        if pkt.haslayer(Ether):
-            mac = pkt[Ether].src.upper()
-            if mac.startswith(prefix.upper()) and pkt.haslayer(IP):
-                ip_addr = pkt[IP].src
-                if net is None or ip_address(ip_addr) in net:
-                    ips.add(ip_addr)
+    try:
+        proc = subprocess.Popen(
+            ["timeout", str(timeout), "tcpdump", "-eni", interface, "-n", "ip"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+        )
+    except FileNotFoundError:
+        return []
 
-    sniff(iface=interface, prn=handler, timeout=timeout, store=False)
-    return list(ips)
+    if proc.stdout is None:
+        return []
+
+    mac_re = r"([0-9A-Fa-f]{2}(?::[0-9A-Fa-f]{2}){5})"
+    ip_re = r"(\d{1,3}(?:\.\d{1,3}){3})(?:\.\d+)?"
+
+    for line in proc.stdout:
+        line = line.strip()
+        mac_match = re.search(mac_re, line)
+        ip_match = re.search(ip_re, line)
+        if not mac_match or not ip_match:
+            continue
+        mac = mac_match.group(1).upper()
+        if not mac.startswith(prefix):
+            continue
+        ip_addr = ip_match.group(1)
+        cameras[mac] = ip_addr
+
+    proc.wait()
+
+    return [{"mac": mac, "ip": ip} for mac, ip in cameras.items()]
 
 
 def get_subnet(interface: str = "eth0") -> str:

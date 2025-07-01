@@ -9,8 +9,8 @@
    - Set multicast port
    - Save per camera
 5. Use the **Discover** form to find connected cameras. Toggle the slider to
-   switch between scanning and sniffing. With sniffing enabled, the subnet of
-   `eth0` can be copied automatically.
+   switch between scanning and sniffing. In sniff mode ``tcpdump`` runs for one
+   minute and lists the MAC and IP address of each EMOS camera.
 6. Klik op "Switch to Business Mode" om het apparaat naar bedrijfsmodus te zetten.
    Het ethernetinterface krijgt dan het statische adres `192.168.40.240/24`.
    Druk daarna op "DHCP Mode" om weer een adres via DHCP op te halen.
