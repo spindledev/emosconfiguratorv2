@@ -3,9 +3,9 @@ Description=EMOS Boot Mode Manager
 After=network.target
 
 [Service]
+Type=oneshot
 ExecStart=/home/spindle/emosconfiguratorv2/emos_boot_manager.sh
 WorkingDirectory=/home/spindle/emosconfiguratorv2
-Restart=always
 User=spindle
 
 [Install]
