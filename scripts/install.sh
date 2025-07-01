@@ -7,6 +7,10 @@ echo "[INFO] Starting EMOS Configurator installation..."
 sudo apt update
 sudo apt install -y dnsmasq hostapd python3-pip
 
+# Disable NetworkManager and dhcpcd which conflict with systemd-networkd on Bookworm
+sudo systemctl disable --now NetworkManager || true
+sudo systemctl disable --now dhcpcd || true
+
 # Maak directories indien nodig
 sudo mkdir -p /etc/emos
 sudo cp config/dnsmasq.conf /etc/dnsmasq.conf

@@ -53,9 +53,11 @@ Follow these steps to set up the configurator:
    sudo ./scripts/install.sh
    ```
 
-    The script installs required packages, configures `systemd-networkd` so
-    that `wlan0` uses the static address `192.168.10.1`, and marks the system
-    for business mode on the next reboot.
+    The script installs required packages, disables `NetworkManager` and
+    `dhcpcd` (both enabled by default on Raspberry Pi OS Bookworm), configures
+    `systemd-networkd` so that `wlan0` uses the static address `192.168.10.1`,
+    and sets up `hostapd` and `dnsmasq` so that the hotspot works right after
+    reboot. The system is marked for business mode on the next reboot.
 
 2. **Business mode** – after the reboot, connect to Wi‑Fi network `Spindle_EMOS_Config` and open [http://192.168.10.1:8000](http://192.168.10.1:8000). The ethernet interface is now used only to configure EMOS cameras and for ARP scans.
 
@@ -76,6 +78,10 @@ Response:
 ## Hotspot and camera configuration
 
 Power on the Raspberry Pi and connect to the hotspot mentioned above, then browse to [http://192.168.10.1:8000](http://192.168.10.1:8000). Follow the steps in the [user guide](userguide.md) to configure each camera.
+
+### Bookworm notes
+
+On Raspberry Pi OS Bookworm, `NetworkManager` manages wireless interfaces by default. The installer disables `NetworkManager` and `dhcpcd` for you so that `systemd-networkd` can assign the static address `192.168.10.1` to `wlan0`. DHCP leases are served by `dnsmasq` as configured in `config/dnsmasq.conf`.
 
 ## Version updates
 
